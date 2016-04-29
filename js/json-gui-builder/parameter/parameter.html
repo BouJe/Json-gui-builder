@@ -1,0 +1,121 @@
+<div class="container">
+	<h3>{{paramObject.displayName}} Parameter configuration </h3>
+	<div class="row form-group">
+		<label for="type" class="control-label">Type </label>
+		<select name="type" ng-model="dataType" class="form-control" ng-change="changeType()">
+			<option value="" selected>Choose a type</option>
+			<option value="integer">Integer</option>
+			<option value="float">Float</option>
+			<option value="datetime">Datetime</option>
+			<option value="select">Select</option>
+			<option value="text">Text</option>
+			<option value="domains">Domains</option>
+			<option value="fileupload">fileupload</option>
+		</select>
+	</div>
+	<div class="row form-group" ng-class="{'has-error': containsBlanks(namelistName), 'has-error': errorArr.nameList == 1}">
+		<label class="control-label" for="nameList">Namelist name</label>
+		<input type="text" name="nameList" ng-model="namelistName" class="form-control">
+		<span class="help-block" ng-if="containsBlanks(namelistName)">No white spaces.</span>
+		<span class="help-block" ng-if="errorArr.nameList == 1">You have to enter a nameList name.</span>
+	</div>
+	<!-- SPECIFIC FIELDS -->
+	<div class="row" ng-if="dataType=='fileupload' || dataType=='datetime' || dataType=='domains' || dataType == 'select'">
+		<p><strong>Specific fields</strong></p>
+		<div ng-if="dataType=='fileupload'">
+			<div class="row form-group"  ng-class="{'has-error': isPositive(maxSizeValue)}">
+				<div class="col-xs-8">
+					<label for="maxSize" class="control-label">Max input size</label>
+					<input type="integer" name="maxSize" min="1" ng-model="maxSize.maxSizeValue" class="form-control">
+					<span class="help-block" ng-if="isPositive(maxSizeValue)">The value must be positive.</span>
+				</div>
+				<div class="col-xs-4">
+					<select ng-model="maxSize.maxSizeUnit" class="form-control">
+						<option value="kb">kB</option>
+						<option value="mb">MB</option>
+						<option value="gb">GB</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-xs-8">
+				<div class="form-group"  ng-class="{'has-error': isPositive(maxUploadValue)}">
+					<label for="maxUpload" class="control-label">Max files number</label>
+					<input type="integer" name="maxUpload" min="1" ng-model="maxUploadValue" class="form-control" ng-change="changeMaxUpload()">
+					<span class="help-block" ng-if="isPositive(maxUploadValue)">The value must be positive.</span>
+				</div>
+				<div class="form-group"  ng-class="{'has-error': isPositive(minUploadValue)}">
+					<label for="minUpload" class="control-label">Min files number</label>
+					<input type="integer" name="minUpload" min="1" ng-model="minUploadValue" class="form-control" ng-change="changeMinUpload()">
+					<span class="help-block" ng-if="isPositive(minUploadValue)">The value must be positive.</span>
+				</div>
+			</div>
+		</div>
+		<div ng-if="dataType=='datetime'" class="form-group" ng-class="{'has-error': dateOrTime()}">
+			<label for="hasDate" class="control-label">Date </label>
+			<select name="hasDate" ng-model="hasDate" class="form-control" ng-change="changeDate()">
+				<option value="1">True</option>
+				<option value="0">False</option>
+			</select>
+			<label for="hasTime" class="control-label">Time </label>
+			<select name="hasTime" ng-model="hasTime" class="form-control" ng-change="changeTime()">
+				<option value="1">True</option>
+				<option value="0">False</option>
+			</select>
+			<span class="help-block" ng-if="dateOrTime()">At least one value have to be on true.</span>
+		</div>
+		<div ng-if="dataType=='domains'">
+			<label for="onlyNested">Only nested </label>
+			<select name="onlyNested" ng-model="onlyNested" ng-change="changeOnlyNested()">
+				<option value="1">True</option>
+				<option value="0">False</option>
+			</select>
+			<div class="form-group" ng-class="{'has-error': isPositive(maxDomainsValue)}">
+				<label for="maxDomains" class="control-label">Maximum number of domains</label>
+				<input type="integer" name="maxDomains" ng-model="maxDomainsValue" ng-change="changeMaxDomains()">
+			</div>
+		</div>
+		<div ng-if="dataType=='select'">
+			<p><strong>Options</strong></p>
+			<div  ng-repeat="option in paramObject.values track by $index">
+				<input type="text" ng-model="option.name">
+				<input type="button" value="x" ng-click="delOption($index)">
+			</div>
+			<input type="button" value="+" ng-click="addOption()">
+		</div>
+	</div>
+	<!-- END OF SPECIFIC FIELDS -->
+	<div class="row"><!--DEFAULT VALUE -->
+		<p><strong>Default value</strong></p>
+		<integer ng-if="dataType=='integer'" parameters="paramObject" dependencies = "[]"></integer>
+    	<float ng-if="dataType=='float'" parameters="paramObject" dependencies = "[]"></float>  
+    	<datetime ng-if="dataType=='datetime'" parameters="paramObject" dependencies = "[]"></datetime>  
+    	<select-parameter ng-if="dataType=='select'" parameters="paramObject" dependencies ="[]"></select-parameter>  
+    	<text-parameter ng-if="dataType=='text'" parameters="paramObject" dependencies = "[]"></text-parameter>  
+    	<domains  ng-if="dataType=='domains'" parameters="paramObject" dependencies = "[]"></domains>
+    	<fileupload  ng-if="dataType=='fileupload'" parameters="paramObject" dependencies = "[]"></fileupload>
+	</div><!-- / DEFAULT VALUE -->
+	<div class="row"><!-- DEPENDENCIES SELECTION -->
+		<label for="dependencies">Dependencies</label>
+		<div class="form-group" ng-class="{'has-error': dependencieError == '1'}">
+			<input type="text" placeholder="Choose dependencies..." list='depenList' ng-model="newDepen" class="form-control">
+			<datalist id="depenList">
+				<option ng-repeat="newDependencie in dependenciesArr" value="{{newDependencie.name}}">{{newDependencie.name}}</option>
+			</datalist>
+			<input type="button" value="+" ng-click="addDependencie(newDepen)">
+			<span class="help-block" ng-if="isADependencie == '0'">The dependencie doesn't exist.</span>
+			<span class="help-block" ng-if="alreadyAdd == '1'">The dependencie is already selected.</span>
+		</div>
+		<ul>
+			<li ng-repeat="dependencie in selectedDependencies track by $index">{{dependencie.name}} <input type="button" value="x" ng-click="delDependencie($index, dependencie.varName)"></li>
+		</ul>
+	</div><!-- / DEPENDENCIES SELECTION -->
+	<div class="row"><!-- CATEGORY -->
+		<label for="catSelect">Category</label>
+		<select name="catSelect" ng-model="category">
+			<option value="">Choose a category</option>
+			<option ng-repeat="cat in categoryArr" value="{{cat.value}}">{{cat.name}}</option>
+		</select>	
+	</div><!-- CATEGORY -->
+	<input type="button" value="Validating expressions" class="btn-primary" ng-click="goToExpression()">
+	<span>{{paramObject.expressionsArr.length}} expression(s) build.</span>
+</div>

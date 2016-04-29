@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+    <head>
+        <script src="bower_components/angular/angular.min.js"></script>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/angular-route/angular-route.min.js"></script>
+
+        <script src="bower_components/ng-file-upload/ng-file-upload.js"></script>
+        <script src="js/lib/moment.js"></script>
+
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs23W0MKLDsb1-dLHxcx0RcpB_5h3399E&libraries=drawing"></script>
+
+        <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+
+        <script src="js/mainController.js"></script>
+        <script src="js/directives.js"></script>
+        <script src="js/directives/integer/integer.js"></script>
+        <script src="js/directives/float/float.js"></script>
+        <script src="js/directives/datetime/datetime.js"></script>
+        <script src="js/directives/select/select.js"></script>
+        <script src="js/directives/text/text.js"></script>
+        <script src="js/directives/fileupload/fileupload.js"></script>
+
+        <script src="js/directives/domains/domains.js"></script>
+        <script src="js/directives/model/model.js"></script>
+
+        <script src="js/json-gui-builder/js-gui-builder-dir.js"></script>
+        <script src="js/json-gui-builder/expressionList/expressionList.js"></script>
+        <script src="js/json-gui-builder/expression/expression.js"></script>
+        <script src="js/json-gui-builder/parameter/parameter.js"></script>
+
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+        <link rel="stylesheet" href="js/directives/domains/domains.css"/>
+        <link rel="stylesheet" href="js/directives/datetime/datetime.css"/>
+        <link rel="stylesheet" href="js/directives/fileupload/fileupload.css"/>
+        <link rel="stylesheet" href="js/directives/model/model.css"/>
+
+        <link rel="stylesheet" href="css/directives/parameters.css"/>
+    </head>
+    <body>
+        <!--<div ng-controller="modelController">
+            <model model-data="data"></model>
+        </div>-->
+
+        <div ng-view></div>
+    </body>
+</html>

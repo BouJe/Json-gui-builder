@@ -1,0 +1,17 @@
+<h3>{{ curreParam.name }}'s validating expressions</h3>
+<div ng-repeat="expression in expressions track by $index">
+	<expression-dir curre-param="curreParam" dependencies-arr="dependenciesArr" selected-expre="expression" error-arr="errorArr[$index]"></expression-dir>
+	<!--<div class="col-xs-12">-->     
+    	<div class="col-xs-12">
+            <input class="form-control btn btn-danger" type="button" value="Delete" ng-click="deleteExpression($index)">
+        </div>
+    <!--</div>-->
+	<hr>
+	<hr>
+</div>
+<div class="col-xs-6">
+	<input class="form-control btn btn-primary" type="button" value="New expression" ng-click="addExpression()">	
+</div>
+<div class="col-xs-6">
+	<input class="form-control btn btn-success" type="button" value="Save and go back" ng-click="saveExpressions()">
+</div>

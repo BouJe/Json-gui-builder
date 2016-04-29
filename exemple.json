@@ -1,0 +1,13 @@
+[{
+	dependensciesNames: [dbName],
+	expressionsArr : [
+		{
+			val1: {name: '', varName: ''},
+			operator: '',
+			val2: {name: '', varName: ''},
+			errorMsg: ''
+		}, ...
+	],
+	
+}, ...
+]
