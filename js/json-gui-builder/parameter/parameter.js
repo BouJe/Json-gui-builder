@@ -26,8 +26,8 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 			if (scope.paramObject.namelistName != "") {
 				scope.namelistName = scope.paramObject.namelistName;
 			}
-			if (scope.paramObject.parameterCategory != "") {
-				scope.category = scope.paramObject.parameterCategory;
+			if (scope.paramObject.parameterCategory != undefined) {
+				scope.category = ""+scope.paramObject.parameterCategory+"";
 			}
 
 			scope.changeType = function() {
@@ -168,7 +168,6 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 					scope.selectedDependencies.push(scope.dependenciesArr[scope.depenInd]);
 				}
 				scope.newDepen = "";
-				console.log(scope.selectedDependencies);
 			}
 
 			scope.checkDependencie = function(string) {
@@ -204,7 +203,6 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 					}
 				}
 				scope.paramObject.dependenciesNames.splice(index, 1);
-				console.log(scope.paramObject.dependenciesNames);
 			}
 
 			scope.containsBlanks = function(string) {
@@ -230,16 +228,6 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 			}
 
 			//SAVE FONCTION
-			scope.errorArr = {};//stock the errors variables
-
-			scope.saveNameList = function() {
-				if (scope.namelistName == "" || scope.namelistName == undefined) {
-					scope.errorArr.nameList = 1;
-				} else {
-					scope.paramObject.namelistName = scope.namelistName;
-					scope.errorArr.nameList = 0;
-				}
-			}
 
 			//Save temporary without check
 			scope.tmpSave = function() {
@@ -257,7 +245,36 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
   			/*scope.$watch('paramObject', function() {
   				console.log(scope.paramObject);
   			}, true)*/
-		}
 
+  			scope.checkSetting = function() {
+  				scope.errorArr = {};//stock the errors variables
+  				if (scope.dataType == "" || scope.dataType == undefined) {
+  					scope.errorArr.dataType = 1;
+  				} else {
+  					scope.errorArr.dataType = 0;
+  				}
+  				if (scope.namelistName == "" || scope.namelistName == undefined) {
+					scope.errorArr.nameList = 1;
+				} else {
+					scope.errorArr.nameList = 0;
+				}
+				if (scope.category == "" || scope.category == undefined) {
+					scope.errorArr.category = 1;
+				} else {
+					scope.errorArr.category = 0;
+				}
+  			}
+
+			scope.saveParameter = function() {
+				scope.checkSetting();
+				if (scope.errorArr.dataType == 0 || scope.errorArr.nameList == 0 || scope.errorArr.category == 0) {
+					scope.paramObject.namelistName = scope.namelistName;
+					scope.paramObject.parameterCategory = scope.category;
+					dataTransfert.setParamObject(scope.paramObject);
+					$location.path('/portalModels/true');
+				}
+			}
+			console.log(scope);
+		}
 	};
 }]);

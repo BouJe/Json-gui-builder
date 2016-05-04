@@ -3,16 +3,20 @@ var builderModule = angular.module('json-gui-builder', ['ngRoute']);
 builderModule.config(['$routeProvider',function($routeProvider) {
 	$routeProvider
 	.when('/portalModels', {
-		templateUrl: 'js/json-gui-builder/parameterTemplate.html',
+		templateUrl: 'js/json-gui-builder/parameterListLink.html',
+		controller: 'paramListControler'
+	})
+	.when('/portalModels/parameter', {
+		templateUrl: 'js/json-gui-builder/parameterLink.html',
 		controller: 'paramController'
 	})
 	.when('/portalModels/expressions', {
-		templateUrl: 'js/json-gui-builder/expressionTemplate.html',
+		templateUrl: 'js/json-gui-builder/expressionLink.html',
 		controller: 'expreController'
 	})
-	.when('/portalModels/:backFromExpre', {
-		templateUrl: 'js/json-gui-builder/parameterTemplate.html',
-		controller: 'paramController'
+	.when('/portalModels/:back', {
+		templateUrl: 'js/json-gui-builder/parameterListLink.html',
+		controller: 'paramListControler'
 	})
 	.otherwise({
 		redirectTo: '/portalModels'
@@ -24,6 +28,8 @@ builderModule.service('dataTransfert', function(){
 	var paramObject = {};
 
 	var dependencies = [];
+
+	var categories = [];
 
 	var setParamObject = function(Obj) {
 		paramObject = Obj;
@@ -53,6 +59,14 @@ builderModule.service('dataTransfert', function(){
 		return paramObject.expressionsArr;
 	};
 
+	var setCategories = function(Obj) {
+		categories = Obj;
+	}
+
+	var getCategories = function() {
+		return categories;
+	}
+
 	return {
 		setParamObject: setParamObject,
 		getParamObject: getParamObject,
@@ -60,6 +74,8 @@ builderModule.service('dataTransfert', function(){
 		getDependencies: getDependencies,
 		getCurrentParam: getCurrentParam,
 		setExpressions: setExpressions,
-		getExpressions: getExpressions
+		getExpressions: getExpressions,
+		setCategories: setCategories,
+		getCategories: getCategories
 	};
 });

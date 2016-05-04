@@ -1,0 +1,24 @@
+<div class="container">
+	<h3>Parameters list</h3>
+	<div class="border" ng-repeat="param in parameterList track by $index">
+		<div class="col-xs-8">
+			<p><strong>{{param.displayName}}</strong></p>
+		</div>
+		<div class="col-xs-4">
+			<input type="button" class="btn btn-primary" value="setting" ng-click="goToSetting($index)">
+			<input type="button" class="btn btn-danger" value="X" ng-click="delParam($index)">
+		</div>
+		<hr>
+	</div>
+	<input type="button" class="btn btn-primary" value="+" ng-click="addParam()">
+	<div ng-if="newParam == true" class="form-group" ng-class="{'has-error': wrongName == true || noName == true}">
+		<div class="col-xs-8">
+			<input type="text" placeholder="Enter a name..." ng-model="newParamName" class="form-control">
+		</div>
+		<div class="col-xs-4">
+			<input type="button" value="validate" ng-click="saveNewParam(newParamName)" class="btn btn-success">
+		</div>
+		<span class="help-block" ng-if="wrongName == true">This name is already used.</span>
+		<span class="help-block" ng-if="noName == true">You have to enter a name.</span>
+	</div>
+</div>

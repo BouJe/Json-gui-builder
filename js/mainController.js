@@ -15,16 +15,106 @@ app.controller('modelController', function($scope, $timeout) {
     $scope.data = $scope.parseModelFromJson("json/wrf-arw.json");
 });
 
-app.controller('paramController', function($scope, $routeParams, $rootScope, dataTransfert){
+app.controller('paramListControler', ['$scope', '$routeParams', 'dataTransfert', function($scope, $routeParams, dataTransfert){
 
-  $scope.dependencies = [
-    {name:'Dependencie 1', varName:'dep1'},
-    {name:'Dependencie 2', varName:'dep2'},
-    {name:'Dependencie 3', varName:'dep3'},
-    {name:'Dependencie 4', varName:'dep4'}
+  $scope.parseParamFromJson = function(url) {
+
+    $.getJSON(url, function(data) {         
+      $scope.data = data;
+    });
+  }
+
+  $scope.data = $scope.parseParamFromJson("json/wrf-arw.json");
+  
+  $scope.paramList = [
+      {
+        parameterType:"float",
+        value: 26,
+        displayName:"B Day",
+        namelistName: "b_day",
+        dbName: "b_day",
+        dependenciesNames:["b_year"],
+        parameterCategory: 4,
+        computedResult:"(function(){return true;}())",
+        isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}",
+        expressionsArr: [
+          {val1: 'b_day',
+            operator: '<',
+            val2: '31',
+            errorMsg: 'Wrong date'}
+        ]
+       },
+       {
+        parameterType:"integer",
+        value: 94,
+        displayName: "B Year",
+        namelistName: "b_year",
+        dbName: "b_year",
+        dependenciesNames:["b_day"],
+        parameterCategory: 4,
+        computedResult:"(function(){return true;}())",
+        isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}",
+        expressionsArr: [
+          {val1: 'b_year',
+            operator: '>',
+            val2: '1900',
+            errorMsg: 'Too old'}
+        ]
+       },
+       {
+        parameterType:"float",
+        value:54,
+        displayName:"Grid Spacing",
+        namelistName: "grid_spacing",
+        dbName: "grid_spacing",
+        dependenciesNames: ["parental_grid_ratio"],
+        computedResult:"(function(){return true;}())",
+        parameterCategory:3,
+        isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}",
+        expressionsArr: [
+          {val1: 'grid_spacing',
+            operator: '<',
+            val2: 'parental_grid_ratio',
+            errorMsg: 'Wrong value'}
+        ]
+      }, 
+      {
+        parameterType:"integer",
+        value:18,
+        displayName:"Parental Grid Ratio",
+        namelistName: "parental_grid_ratio",
+        dbName: "parental_grid_ratio",
+        parameterCategory:3,
+        dependenciesNames:["grid_spacing"],
+        computedResult:"(function(){return true;}())",
+        isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}",
+        expressionsArr: []
+      },
   ];
 
-	$scope.parametersCategories = [
+  //update the paramList with the parameter updated
+  if ($routeParams.back == "true") {
+    var tmp = dataTransfert.getParamObject();
+    var find = false;
+    for (var i = 0; i < $scope.paramList.length; i++) {
+      if ($scope.paramList[i].dbName == tmp.dbName) {
+        $scope.paramList[i] = tmp;
+        find = true;
+      }
+    }
+    if (find == false) {
+      $scope.paramList.push(tmp);
+    }
+  }
+
+  //Build dependencies array
+  $scope.dependencies = [];
+  for (var i = 0; i < $scope.paramList.length; i++) {
+    $scope.dependencies.push({name: $scope.paramList[i].displayName, varName: $scope.paramList[i].dbName});
+  }
+  dataTransfert.setDependencies($scope.dependencies);
+
+  $scope.categories = [
       {name:'Domain', value:1},
       {name:"Time Control", value:2},
       {name:"Run Option", value:3},
@@ -33,28 +123,17 @@ app.controller('paramController', function($scope, $routeParams, $rootScope, dat
       {name:"Submit", value:6}
   ];
 
-	$scope.paramObject = {
-		    parameterType:"",
-        value:"",
-        displayName:"Choosen Before",
-        namelistName: "",
-        dbName: "staticdbname",
-        dependenciesNames:["dep1"],
-        parameterCategory:"",
-        computedResult:"(function(){return true;}())",
-        isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}",
-        expressionsArr: [
-          {val1: 'staticdbname',
-            operator: '>',
-            val2: '1234',
-            errorMsg: 'Coucou'}
-        ]
-	}
+  dataTransfert.setCategories($scope.categories);
 
-  if ($routeParams.backFromExpre == "true") {
-    $scope.paramObject = dataTransfert.getParamObject();
-  }
+}]);
 
+app.controller('paramController', function($scope, dataTransfert){
+
+	$scope.parametersCategories = dataTransfert.getCategories();
+
+  $scope.paramObject = dataTransfert.getParamObject();
+
+  $scope.dependencies = dataTransfert.getDependencies();
 });
 
 app.controller('expreController', function($scope, dataTransfert){

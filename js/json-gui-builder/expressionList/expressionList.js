@@ -68,7 +68,7 @@ builderModule.directive('expressionListDir', ['$location', 'dataTransfert', func
 				}
 				if (scope.checkErrorArr()) {
 					dataTransfert.setExpressions(scope.expressions);
-					$location.path('/portalModels/true');
+					$location.path('/portalModels/parameter');
 				}
 			}
 

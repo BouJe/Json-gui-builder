@@ -35,7 +35,7 @@
         "computedResult":"(function(){return scope.pars['end_time'].value;}())",
         "isValid" : "return function v(parameters, dependencies){var retObject = {};if(dependencies['start_time'].value>parameters.value){retObject.valid= false; retObject.message = parameters.displayName + ' must be greater than '+dependencies['start_time'].displayName;} else {retObject.valid= true;retObject.message='';} return retObject;}"
     },
-        {
+    {
         "parameterType":"float",
         "value":54,
         "displayName":"Grid Spacing",

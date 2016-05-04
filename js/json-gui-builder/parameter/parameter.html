@@ -1,9 +1,9 @@
 <div class="container">
 	<h3>{{paramObject.displayName}} Parameter configuration </h3>
-	<div class="row form-group">
+	<div class="row form-group" ng-class="{'has-error': errorArr.dataType == 1}">
 		<label for="type" class="control-label">Type </label>
 		<select name="type" ng-model="dataType" class="form-control" ng-change="changeType()">
-			<option value="" selected>Choose a type</option>
+			<option value="">Choose a type</option>
 			<option value="integer">Integer</option>
 			<option value="float">Float</option>
 			<option value="datetime">Datetime</option>
@@ -12,10 +12,11 @@
 			<option value="domains">Domains</option>
 			<option value="fileupload">fileupload</option>
 		</select>
+		<span class="help-block" ng-if="errorArr.dataType == 1">You have to choose a type.</span>
 	</div>
 	<div class="row form-group" ng-class="{'has-error': containsBlanks(namelistName), 'has-error': errorArr.nameList == 1}">
 		<label class="control-label" for="nameList">Namelist name</label>
-		<input type="text" name="nameList" ng-model="namelistName" class="form-control">
+		<input type="text" name="nameList" placeholder="Enter a nameList name" ng-model="namelistName" class="form-control">
 		<span class="help-block" ng-if="containsBlanks(namelistName)">No white spaces.</span>
 		<span class="help-block" ng-if="errorArr.nameList == 1">You have to enter a nameList name.</span>
 	</div>
@@ -86,36 +87,45 @@
 	<!-- END OF SPECIFIC FIELDS -->
 	<div class="row"><!--DEFAULT VALUE -->
 		<p><strong>Default value</strong></p>
-		<integer ng-if="dataType=='integer'" parameters="paramObject" dependencies = "[]"></integer>
-    	<float ng-if="dataType=='float'" parameters="paramObject" dependencies = "[]"></float>  
-    	<datetime ng-if="dataType=='datetime'" parameters="paramObject" dependencies = "[]"></datetime>  
-    	<select-parameter ng-if="dataType=='select'" parameters="paramObject" dependencies ="[]"></select-parameter>  
-    	<text-parameter ng-if="dataType=='text'" parameters="paramObject" dependencies = "[]"></text-parameter>  
-    	<domains  ng-if="dataType=='domains'" parameters="paramObject" dependencies = "[]"></domains>
-    	<fileupload  ng-if="dataType=='fileupload'" parameters="paramObject" dependencies = "[]"></fileupload>
+		<integer ng-if="dataType=='integer'" parameters="paramObject" dependencies="[]"></integer>
+    	<float ng-if="dataType=='float'" parameters="paramObject" dependencies="[]"></float>  
+    	<datetime ng-if="dataType=='datetime'" parameters="paramObject" dependencies="[]"></datetime>  
+    	<select-parameter ng-if="dataType=='select'" parameters="paramObject" dependencies="[]"></select-parameter>  
+    	<text-parameter ng-if="dataType=='text'" parameters="paramObject" dependencies="[]"></text-parameter>  
+    	<domains  ng-if="dataType=='domains'" parameters="paramObject" dependencies="[]"></domains>
+    	<fileupload  ng-if="dataType=='fileupload'" parameters="paramObject" dependencies="[]"></fileupload>
+    	<p ng-if="dataType==undefined" class="center">No type selected yet.</p>
 	</div><!-- / DEFAULT VALUE -->
 	<div class="row"><!-- DEPENDENCIES SELECTION -->
 		<label for="dependencies">Dependencies</label>
 		<div class="form-group" ng-class="{'has-error': dependencieError == '1'}">
-			<input type="text" placeholder="Choose dependencies..." list='depenList' ng-model="newDepen" class="form-control">
-			<datalist id="depenList">
-				<option ng-repeat="newDependencie in dependenciesArr" value="{{newDependencie.name}}">{{newDependencie.name}}</option>
-			</datalist>
-			<input type="button" value="+" ng-click="addDependencie(newDepen)">
+			<div class="form-inline">
+				<input type="text" placeholder="Choose dependencies..." list='depenList' ng-model="newDepen" class="form-control">
+				<datalist id="depenList">
+					<option ng-repeat="newDependencie in dependenciesArr" value="{{newDependencie.name}}">{{newDependencie.name}}</option>
+				</datalist>
+				<input type="button" value="+" ng-click="addDependencie(newDepen)" class="btn btn-default btn-sm">
+			</div>
 			<span class="help-block" ng-if="isADependencie == '0'">The dependencie doesn't exist.</span>
 			<span class="help-block" ng-if="alreadyAdd == '1'">The dependencie is already selected.</span>
 		</div>
 		<ul>
-			<li ng-repeat="dependencie in selectedDependencies track by $index">{{dependencie.name}} <input type="button" value="x" ng-click="delDependencie($index, dependencie.varName)"></li>
+			<li ng-repeat="dependencie in selectedDependencies track by $index">{{dependencie.name}} <input type="button" value="x" class="btn btn-default btn-sm" ng-click="delDependencie($index, dependencie.varName)"></li>
 		</ul>
 	</div><!-- / DEPENDENCIES SELECTION -->
-	<div class="row"><!-- CATEGORY -->
+	<div class="row form-group" ng-class="{'has-error': errorArr.category == 1}"><!-- CATEGORY -->
 		<label for="catSelect">Category</label>
-		<select name="catSelect" ng-model="category">
+		<select name="catSelect" ng-model="category" class="form-control">
 			<option value="">Choose a category</option>
 			<option ng-repeat="cat in categoryArr" value="{{cat.value}}">{{cat.name}}</option>
 		</select>	
+		<span class="help-block" ng-if="errorArr.category == 1">You have to choose a category.</span>
 	</div><!-- CATEGORY -->
-	<input type="button" value="Validating expressions" class="btn-primary" ng-click="goToExpression()">
-	<span>{{paramObject.expressionsArr.length}} expression(s) build.</span>
+	<div class="row">
+		<input type="button" value="Validating expressions" class="btn btn-primary" ng-click="goToExpression()">
+		<span>{{paramObject.expressionsArr.length}} expression(s) build.</span>
+	</div>
+	<div class="row">
+		<input type="button" value="Save parameter" class="btn btn-success" ng-click="saveParameter()">
+	</div>
 </div>
