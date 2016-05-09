@@ -5,7 +5,7 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 		// priority: 1,
 		// terminal: true,
 			scope: {
-				parameterList: '='
+				data: '='
 			}, // {} = isolate, true = child, false/undefined = no change
 		// controller: function($scope, $element, $attrs, $transclude) {},
 		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
@@ -16,14 +16,27 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 		// transclude: true,
 		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
 		link: function(scope, iElm, iAttrs, controller) {
-				
+
+			//INITIALISATION/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			//Build and send the dependencies array
+			scope.buildDependenciesArrray = function() {
+				scope.dependencies = [];
+  				for (var i = 0; i < scope.data.parameters.length; i++) {
+    				scope.dependencies.push({name: scope.data.parameters[i].displayName, varName: scope.data.parameters[i].dbName});
+  				}
+  				dataTransfert.setDependencies(scope.dependencies);
+			}
+
 			scope.goToSetting = function(index) {
-				dataTransfert.setParamObject(scope.parameterList[index]);
+				scope.buildDependenciesArrray();
+				dataTransfert.setData(scope.data);
+				dataTransfert.setCurrentParamIndex(index);
 				$location.path('/portalModels/parameter');
 			}
 
 			scope.delParam = function(index) {
-				scope.parameterList.splice(index, 1);
+				scope.data.parameters.splice(index, 1);
 			}
 
 			scope.addParam = function() {
@@ -31,14 +44,16 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 			}
 
 			scope.checkName = function(name) {
+				scope.noName = false;
+				scope.wrongName = false;
 				//check if the user write something
-				if (name == undefined) {
+				if (name == undefined || name == "") {
 					scope.noName = true;
 					return false;
 				}
 				//check if the name enter is not already used
-				for (var i = 0; i < scope.parameterList.length; i++) {
-					if (scope.parameterList[i].displayName == name) {
+				for (var i = 0; i < scope.data.parameters.length; i++) {
+					if (scope.data.parameters[i].displayName == name) {
 						scope.wrongName = true;
 						return false;
 					}
@@ -51,13 +66,12 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 
 			scope.saveNewParam = function(name) {
 				if (scope.checkName(name)) {
-					scope.parameterList.push({
+					scope.data.parameters.push({
 						displayName: name,
 						dbName: scope.geneDbName(name),
 						dependenciesNames: [],
 						computedResult:"(function(){return true;}())",
-        				isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}",
-						expressionsArr: []
+        				isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}"
 					});
 					scope.newParam = false;
 				}

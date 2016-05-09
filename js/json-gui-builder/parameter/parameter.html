@@ -24,19 +24,15 @@
 	<div class="row" ng-if="dataType=='fileupload' || dataType=='datetime' || dataType=='domains' || dataType == 'select'">
 		<p><strong>Specific fields</strong></p>
 		<div ng-if="dataType=='fileupload'">
-			<div class="row form-group"  ng-class="{'has-error': isPositive(maxSizeValue)}">
-				<div class="col-xs-8">
-					<label for="maxSize" class="control-label">Max input size</label>
-					<input type="integer" name="maxSize" min="1" ng-model="maxSize.maxSizeValue" class="form-control">
-					<span class="help-block" ng-if="isPositive(maxSizeValue)">The value must be positive.</span>
-				</div>
-				<div class="col-xs-4">
-					<select ng-model="maxSize.maxSizeUnit" class="form-control">
-						<option value="kb">kB</option>
-						<option value="mb">MB</option>
-						<option value="gb">GB</option>
-					</select>
-				</div>
+			<div class="row form-inline form-group"  ng-class="{'has-error': isPositive(maxSizeValue)}">
+				<label for="maxSize" class="control-label">Max input size</label>
+				<input type="integer" name="maxSize" min="1" ng-model="maxSize.maxSizeValue" class="form-control">
+				<span class="help-block" ng-if="isPositive(maxSizeValue)">The value must be positive.</span>
+				<select ng-model="maxSize.maxSizeUnit" class="form-control">
+					<option value="kb">kB</option>
+					<option value="mb">MB</option>
+					<option value="gb">GB</option>
+				</select>
 			</div>
 			<div class="col-xs-8">
 				<div class="form-group"  ng-class="{'has-error': isPositive(maxUploadValue)}">
@@ -54,21 +50,21 @@
 		<div ng-if="dataType=='datetime'" class="form-group" ng-class="{'has-error': dateOrTime()}">
 			<label for="hasDate" class="control-label">Date </label>
 			<select name="hasDate" ng-model="hasDate" class="form-control" ng-change="changeDate()">
-				<option value="1">True</option>
-				<option value="0">False</option>
+				<option value="true">True</option>
+				<option value="false">False</option>
 			</select>
 			<label for="hasTime" class="control-label">Time </label>
 			<select name="hasTime" ng-model="hasTime" class="form-control" ng-change="changeTime()">
-				<option value="1">True</option>
-				<option value="0">False</option>
+				<option value="true">True</option>
+				<option value="false">False</option>
 			</select>
 			<span class="help-block" ng-if="dateOrTime()">At least one value have to be on true.</span>
 		</div>
 		<div ng-if="dataType=='domains'">
 			<label for="onlyNested">Only nested </label>
 			<select name="onlyNested" ng-model="onlyNested" ng-change="changeOnlyNested()">
-				<option value="1">True</option>
-				<option value="0">False</option>
+				<option value="true">True</option>
+				<option value="false">False</option>
 			</select>
 			<div class="form-group" ng-class="{'has-error': isPositive(maxDomainsValue)}">
 				<label for="maxDomains" class="control-label">Maximum number of domains</label>
@@ -87,13 +83,13 @@
 	<!-- END OF SPECIFIC FIELDS -->
 	<div class="row"><!--DEFAULT VALUE -->
 		<p><strong>Default value</strong></p>
-		<integer ng-if="dataType=='integer'" parameters="paramObject" dependencies="[]"></integer>
-    	<float ng-if="dataType=='float'" parameters="paramObject" dependencies="[]"></float>  
-    	<datetime ng-if="dataType=='datetime'" parameters="paramObject" dependencies="[]"></datetime>  
-    	<select-parameter ng-if="dataType=='select'" parameters="paramObject" dependencies="[]"></select-parameter>  
-    	<text-parameter ng-if="dataType=='text'" parameters="paramObject" dependencies="[]"></text-parameter>  
-    	<domains  ng-if="dataType=='domains'" parameters="paramObject" dependencies="[]"></domains>
-    	<fileupload  ng-if="dataType=='fileupload'" parameters="paramObject" dependencies="[]"></fileupload>
+		<integer ng-if="dataType=='integer'" parameters="fakeParam" dependencies="[]"></integer>
+    	<float ng-if="dataType=='float'" parameters="fakeParam" dependencies="[]"></float>  
+    	<datetime ng-if="dataType=='datetime'" parameters="fakeParam" dependencies="[]"></datetime>  
+    	<select-parameter ng-if="dataType=='select'" parameters="fakeParam" dependencies="[]"></select-parameter>  
+    	<text-parameter ng-if="dataType=='text'" parameters="fakeParam" dependencies="[]"></text-parameter>  
+    	<domains  ng-if="dataType=='domains'" parameters="fakeParam" dependencies="[]"></domains>
+    	<fileupload  ng-if="dataType=='fileupload'" parameters="fakeParam" dependencies="[]"></fileupload>
     	<p ng-if="dataType==undefined" class="center">No type selected yet.</p>
 	</div><!-- / DEFAULT VALUE -->
 	<div class="row"><!-- DEPENDENCIES SELECTION -->

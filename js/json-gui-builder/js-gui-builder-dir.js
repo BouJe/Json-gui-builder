@@ -2,10 +2,6 @@ var builderModule = angular.module('json-gui-builder', ['ngRoute']);
 
 builderModule.config(['$routeProvider',function($routeProvider) {
 	$routeProvider
-	.when('/portalModels', {
-		templateUrl: 'js/json-gui-builder/parameterListLink.html',
-		controller: 'paramListControler'
-	})
 	.when('/portalModels/parameter', {
 		templateUrl: 'js/json-gui-builder/parameterLink.html',
 		controller: 'paramController'
@@ -19,63 +15,76 @@ builderModule.config(['$routeProvider',function($routeProvider) {
 		controller: 'paramListControler'
 	})
 	.otherwise({
-		redirectTo: '/portalModels'
+		redirectTo: '/portalModels/false'
 	});
 }]);
 
 builderModule.service('dataTransfert', function(){
 
-	var paramObject = {};
+	//the entier data extract from the json file
+	var data = {};
 
+	//the temporary dependencies array (displayName + dbName) of the current parameter 
 	var dependencies = [];
 
-	var categories = [];
+	//the index of the current parameter
+	var currentParamIndex;
 
-	var setParamObject = function(Obj) {
-		paramObject = Obj;
+	var setData = function(obj) {
+		data = obj;
 	}
 
-	var getParamObject = function() {
-		return paramObject;
+	var getData = function() {
+		return data;
 	}
 
-	var setDependencies = function(Obj) {
-		dependencies = Obj;
+	var setCurrentParamIndex = function(index) {
+		currentParamIndex = index;
+	}
+
+	var getCurrentParamObject = function() {
+		return data.parameters[currentParamIndex];
+	}
+
+	var getCurrentParamName = function() {
+		return {name: data.parameters[currentParamIndex].displayName, varName: data.parameters[currentParamIndex].dbName};
+	};
+
+	var updateCurrentParam = function(obj) {
+		data.parameters[currentParamIndex] = obj;
+	}
+
+	var setDependencies = function(obj) {
+		dependencies = obj;
 	};
 
 	var getDependencies = function() {
 		return dependencies;
 	};
 
-	var getCurrentParam = function() {
-		return {name: paramObject.displayName, varName: paramObject.dbName};
-	};
-
-	var setExpressions = function(Obj) {
-		paramObject.expressionsArr = Obj;
+	var setExpressions = function(obj) {
+		data.parameters[currentParamIndex].expressionsArr = obj;
 	};
 
 	var getExpressions = function() {
-		return paramObject.expressionsArr;
+		return data.parameters[currentParamIndex].expressionsArr;
 	};
 
-	var setCategories = function(Obj) {
-		categories = Obj;
-	}
-
 	var getCategories = function() {
-		return categories;
+		return data.parametersCategories;
 	}
 
 	return {
-		setParamObject: setParamObject,
-		getParamObject: getParamObject,
+		setData: setData,
+		getData: getData,
+		setCurrentParamIndex: setCurrentParamIndex,
+		getCurrentParamObject: getCurrentParamObject,
+		getCurrentParamName: getCurrentParamName,
+		updateCurrentParam: updateCurrentParam,
 		setDependencies: setDependencies,
 		getDependencies: getDependencies,
-		getCurrentParam: getCurrentParam,
 		setExpressions: setExpressions,
 		getExpressions: getExpressions,
-		setCategories: setCategories,
 		getCategories: getCategories
 	};
 });

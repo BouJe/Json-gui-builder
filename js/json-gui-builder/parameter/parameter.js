@@ -19,7 +19,8 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
 		link: function(scope, iElm, iAttrs, controller) {
 
-			//Initialisation
+			//INITIALISATION//////////////////////////////////////////////////////////////////////////////////////
+
 			if (scope.paramObject.parameterType != "") {
 				scope.dataType = scope.paramObject.parameterType;
 			}
@@ -29,6 +30,35 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 			if (scope.paramObject.parameterCategory != undefined) {
 				scope.category = ""+scope.paramObject.parameterCategory+"";
 			}
+			if (scope.paramObject.expressionsArr == undefined) {
+				scope.paramObject.expressionsArr = [];
+			}
+			//Build a fake paramObj without isValid property for the default value
+			scope.fakeParam = scope.paramObject;
+			scope.fakeParam.isValid = "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message='';return retObject;}";
+
+			//Specific fields initialisation
+			switch (scope.paramObject.parameterType)
+			{
+				case 'fileupload':
+					var unit = scope.paramObject.maxSize.slice(-2, scope.paramObject.maxSize.length);
+					var value = scope.paramObject.maxSize.slice(0, scope.paramObject.maxSize.length-2)
+					scope.maxSize = {maxSizeUnit: unit, maxSizeValue: value};
+					console.log(scope.maxSize);
+					scope.maxUploadValue = scope.paramObject.maxUpload;
+					scope.minUploadValue = scope.paramObject.minUpload;
+				break;
+				case 'datetime':
+					scope.hasDate = ""+scope.paramObject.hasDate+"";
+					scope.hasTime = ""+scope.paramObject.hasTime+"";
+				break;
+				case 'domains':
+					scope.onlyNested = ""+scope.paramObject.onlyNested+"";
+					scope.maxDomainsValue = scope.paramObject.maxDomains;
+				break;
+			}
+
+			//REAL TIME UPDATE FUNCTIONS////////////////////////////////////////////////////////////////////////////
 
 			scope.changeType = function() {
 				scope.paramObject.value = "";
@@ -72,15 +102,15 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 						break;
 					case 'datetime':
 						scope.paramObject.hasDate = true;
-						scope.hasDate = "1";
+						scope.hasDate = "true";
 						scope.paramObject.hasTime = true;
-						scope.hasTime = "1";
+						scope.hasTime = "true";
 						break;
 					case 'domains':
 						scope.paramObject.centerCoords = {"lat":44.496,"long":8.9209};
 						scope.paramObject.mapZoom = 8;
 						scope.paramObject.onlyNested = true;
-						scope.onlyNested = "1";
+						scope.onlyNested = "true";
 						scope.paramObject.maxDomains = 4;
 						scope.maxDomainsValue = 4;
 						break;
@@ -88,7 +118,6 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 						scope.paramObject.values = [];
 						break;
 				}
-				//console.log(scope.paramObject);
 			}
 
 			//fileupload specific field watcher
@@ -108,11 +137,19 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 
 			//datetime specific fields
 			scope.changeDate = function(){
-				scope.paramObject.hasDate = scope.hasDate;
+				if (scope.hasDate="true") {
+					scope.paramObject.hasDate = true;
+				} else {
+					scope.paramObject.hasDate = false;
+				}
 			}
 
 			scope.changeTime = function(){
-				scope.paramObject.hasTime = scope.hasTime;
+				if (scope.hasTime="true") {
+					scope.paramObject.hasTime = true;
+				} else {
+					scope.paramObject.hasTime = false;
+				}
 			}
 
 			scope.dateOrTime = function() {
@@ -141,7 +178,12 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 				scope.paramObject.values.splice(index, 1);
 			}
 
-			//DEPENDENCIES
+			//Default value changes
+			scope.$watch('fakeParam.value', function() {
+				scope.paramObject.value = scope.fakeParam.value;
+			}) 
+
+			//DEPENDENCIES//////////////////////////////////////////////////////////////////////////////////////
 
 			//Look for the display name in the dependencies array given to the directive
 			scope.getDpName = function(varName) {
@@ -205,6 +247,8 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 				scope.paramObject.dependenciesNames.splice(index, 1);
 			}
 
+			//CHECK FUNCTIONS////////////////////////////////////////////////////////////////////////////////////
+
 			scope.containsBlanks = function(string) {
 				if (typeof string == "undefined") {
 					return false;
@@ -227,26 +271,7 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 				}
 			}
 
-			//SAVE FONCTION
-
-			//Save temporary without check
-			scope.tmpSave = function() {
-				scope.paramObject.namelistName = scope.namelistName;
-				scope.paramObject.parameterCategory = scope.category;
-			}
-
-			scope.goToExpression = function() {
-				scope.tmpSave();
-				dataTransfert.setDependencies(scope.selectedDependencies);
-    			dataTransfert.setParamObject(scope.paramObject);
-    			$location.path('/portalModels/expressions');
-  			}
-
-  			/*scope.$watch('paramObject', function() {
-  				console.log(scope.paramObject);
-  			}, true)*/
-
-  			scope.checkSetting = function() {
+			scope.checkSetting = function() {
   				scope.errorArr = {};//stock the errors variables
   				if (scope.dataType == "" || scope.dataType == undefined) {
   					scope.errorArr.dataType = 1;
@@ -265,16 +290,57 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
 				}
   			}
 
+			//SAVE FONCTION///////////////////////////////////////////////////////////////////////////////////
+
+			//Save temporary without check
+			scope.tmpSave = function() {
+				scope.paramObject.namelistName = scope.namelistName;
+				scope.paramObject.parameterCategory = scope.category;
+			}
+
+			scope.goToExpression = function() {
+				scope.tmpSave();
+				dataTransfert.setDependencies(scope.selectedDependencies);
+    			dataTransfert.updateCurrentParam(scope.paramObject);
+    			$location.path('/portalModels/expressions');
+  			}
+
+  			//Build the isValid property
+  			scope.buildIsVaslid = function() {
+  				var res = "return function v(parameters, dependencies){var retObject = {};";
+  				for (var i = 0; i < scope.paramObject.expressionsArr.length; i++) {
+  					if(i!=0) res += "else ";
+  					res += "if(";
+  					if (scope.paramObject.expressionsArr[i].val1 == scope.paramObject.dbName) {
+  						res += "parameters.value";
+  					} else {
+  						res += "dependencies['"+scope.paramObject.expressionsArr[i].val1+"'].value";
+  					}
+  					res += ""+scope.paramObject.expressionsArr[i].operator+"";
+  					var val2name = scope.getDpName(scope.paramObject.expressionsArr[i].val2);
+  					if ( val2name == undefined) {
+  						res += ""+scope.paramObject.expressionsArr[i].val2+")";
+  					} else {
+  						res += "dependencies['"+scope.paramObject.expressionsArr[i].val2+"'].value)";
+  					}
+  					res += "{retObject.valid= false;retObject.message = "+scope.paramObject.expressionsArr[i].errorMsg+";}";
+  				}
+  				res += "else {retObject.valid= true;retObject.message='';}return retObject;}";
+  				return res;
+			}
+
+			console.log(scope.buildIsVaslid());
+
 			scope.saveParameter = function() {
 				scope.checkSetting();
-				if (scope.errorArr.dataType == 0 || scope.errorArr.nameList == 0 || scope.errorArr.category == 0) {
+				if (scope.errorArr.dataType == 0 && scope.errorArr.nameList == 0 && scope.errorArr.category == 0) {
 					scope.paramObject.namelistName = scope.namelistName;
 					scope.paramObject.parameterCategory = scope.category;
-					dataTransfert.setParamObject(scope.paramObject);
+					dataTransfert.updateCurrentParam(scope.paramObject);
 					$location.path('/portalModels/true');
 				}
 			}
-			console.log(scope);
+
 		}
 	};
 }]);
