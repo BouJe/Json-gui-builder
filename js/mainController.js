@@ -15,7 +15,7 @@ app.controller('modelController', function($scope, $timeout) {
     $scope.data = $scope.parseModelFromJson("json/wrf-arw.json");
 });
 
-app.controller('paramListControler', ['$scope', '$routeParams', 'dataTransfert', function($scope, $routeParams, dataTransfert){
+app.controller('paramListControler', ['$scope', '$routeParams', '$http','dataTransfert', function($scope, $routeParams, $http, dataTransfert){
 
   $scope.parseParamFromJson = function(url) {
 
@@ -30,6 +30,19 @@ app.controller('paramListControler', ['$scope', '$routeParams', 'dataTransfert',
     $scope.parseParamFromJson("json/wrf-arw.json");
   }
 
+  $scope.saveOnJson = function() {
+    //var jsonData = angular.toJson($scope.data, true);
+    //console.log(jsonData);
+    //$http.post("http://localhost/JSONreception/JSONreception.php", jsonData).error(function(status){console.log(status)});;
+    $http({method: 'POST', url: 'http://localhost/JSONreception/JSONreception.php', data: $scope.data}).
+        then(function(response) {
+          console.log(response.status);
+          console.log(response.data);
+        }, function(response) {
+          console.log(response.data);
+          console.log(response.status);
+      });
+  }
   //update the paramList with the parameter updated
   /*$scope.updateParameters = function() {
     

@@ -17,23 +17,7 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
 		link: function(scope, iElm, iAttrs, controller) {
 
-			//INITIALISATION/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-			//Build and send the dependencies array
-			scope.buildDependenciesArrray = function() {
-				scope.dependencies = [];
-  				for (var i = 0; i < scope.data.parameters.length; i++) {
-    				scope.dependencies.push({name: scope.data.parameters[i].displayName, varName: scope.data.parameters[i].dbName});
-  				}
-  				dataTransfert.setDependencies(scope.dependencies);
-			}
-
-			scope.goToSetting = function(index) {
-				scope.buildDependenciesArrray();
-				dataTransfert.setData(scope.data);
-				dataTransfert.setCurrentParamIndex(index);
-				$location.path('/portalModels/parameter');
-			}
+			//PARAMETERS MANAGEMENT//////////////////////////////////////////////////////////////////////////////////////////////////
 
 			scope.delParam = function(index) {
 				scope.data.parameters.splice(index, 1);
@@ -60,15 +44,36 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 				}
 				return true;
 			}
-			scope.geneDbName = function(name) {
+
+			//BUILDING DATA FUNCTIONS/////////////////////////////////////////////////////////////////////////
+
+			//Build and send the dependencies array
+			scope.buildDependenciesArrray = function() {
+				scope.dependencies = [];
+  				for (var i = 0; i < scope.data.parameters.length; i++) {
+    				scope.dependencies.push({name: scope.data.parameters[i].displayName, varName: scope.data.parameters[i].dbName});
+  				}
+  				dataTransfert.setDependencies(scope.dependencies);
+			}
+
+			scope.buildDbName = function(name) {
 				return name.toLowerCase().split(' ').join('_')+""+Date.now();
 			}
 
-			scope.saveNewParam = function(name) {
+			//EVENT FUNCTIONS///////////////////////////////////////////////////////////////////////////////////
+
+			scope.goToSetting = function(index) {
+				scope.buildDependenciesArrray();
+				dataTransfert.setData(scope.data);
+				dataTransfert.setCurrentParamIndex(index);
+				$location.path('/portalModels/parameter');
+			}
+
+			scope.validNewParam = function(name) {
 				if (scope.checkName(name)) {
 					scope.data.parameters.push({
 						displayName: name,
-						dbName: scope.geneDbName(name),
+						dbName: scope.buildDbName(name),
 						dependenciesNames: [],
 						computedResult:"(function(){return true;}())",
         				isValid: "return function v(parameters, dependencies){var retObject = {};retObject.valid= true;retObject.message=''; return retObject;}"

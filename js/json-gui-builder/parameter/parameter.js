@@ -326,14 +326,13 @@ builderModule.directive('parameterDir', ['$location', 'dataTransfert', function(
   					res += "{retObject.valid= false;retObject.message = "+scope.paramObject.expressionsArr[i].errorMsg+";}";
   				}
   				res += "else {retObject.valid= true;retObject.message='';}return retObject;}";
-  				return res;
+  				scope.paramObject.isValid = res;
 			}
-
-			console.log(scope.buildIsVaslid());
 
 			scope.saveParameter = function() {
 				scope.checkSetting();
 				if (scope.errorArr.dataType == 0 && scope.errorArr.nameList == 0 && scope.errorArr.category == 0) {
+					scope.buildIsVaslid();
 					scope.paramObject.namelistName = scope.namelistName;
 					scope.paramObject.parameterCategory = scope.category;
 					dataTransfert.updateCurrentParam(scope.paramObject);

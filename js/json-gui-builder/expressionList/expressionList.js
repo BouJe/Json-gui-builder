@@ -29,6 +29,7 @@ builderModule.directive('expressionListDir', ['$location', 'dataTransfert', func
 
 			scope.deleteExpression = function(index) {
 				scope.expressions.splice(index, 1);
+				scope.errorArr.splice(index, 1);
 			}
 
 			scope.errorArr = [];
@@ -63,6 +64,7 @@ builderModule.directive('expressionListDir', ['$location', 'dataTransfert', func
 			}
 
 			scope.saveExpressions = function() {
+				console.log(scope.errorArr);
 				for (var i = 0; i < scope.expressions.length; i++) {
 					scope.errorArr[i] = scope.verifEmptyField(scope.expressions[i]);
 				}

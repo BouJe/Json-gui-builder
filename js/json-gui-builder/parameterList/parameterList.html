@@ -16,7 +16,7 @@
 			<input type="text" placeholder="Enter a name..." ng-model="newParamName" class="form-control">
 		</div>
 		<div class="col-xs-4">
-			<input type="button" value="validate" ng-click="saveNewParam(newParamName)" class="btn btn-success">
+			<input type="button" value="validate" ng-click="validNewParam(newParamName)" class="btn btn-default">
 		</div>
 		<span class="help-block" ng-if="wrongName == true">This name is already used.</span>
 		<span class="help-block" ng-if="noName == true">You have to enter a name.</span>
