@@ -1,7 +1,7 @@
 <div class="container">
 	<form id="expreForm">
 		<div class="form-group col-xs-12">
-			<div class="col-xs-5" ng-class="{'has-error': errorArr.verifEmptyVal1 == '1'}">
+			<div class="col-xs-5" ng-class="{'has-error': errorArr.emptyVal1}">
     			<select form="expreForm" class="form-control" ng-options="val.name for val in selectValArr" ng-model="val1Selected" ng-change="changeVal1()">
     				<option value="">Choose value 1</option>
         			<!--<option ng-repeat="val in selectValArr" value="{{ val }}">{{ val.name }}</option>-->
@@ -13,7 +13,7 @@
     			</select>
     		</div><!-- /.col-xs-4 -->
     		<div class="col-xs-5">
-    			<div class="input-group" ng-class="{'has-error': errorArr.verifEmptyVal2 == '1'}">
+    			<div class="input-group" ng-class="{'has-error': errorArr.emptyVal2}">
       				<div class="input-group-btn">
         				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ btnDisplay }} <span class="caret"></span></button>
         				<ul class="dropdown-menu">
@@ -26,13 +26,13 @@
     			</div><!-- /input-group -->
   			</div><!-- /.col-xs-4 -->
     	</div><!--Advertising message -->
-    	<div class="form-group col-xs-12" ng-class="{'has-error': errorArr.emptyMsg == '1'}">
+    	<div class="form-group col-xs-12" ng-class="{'has-error': errorArr.emptyMsg}">
     		<textarea class="form-control" name="advertise" id="errorMSG" rows="5" placeholder="Advertising message" ng-model="selectedExpre.errorMsg"></textarea>
     	</div><!-- / Advertising message -->
-        <div class="form-group" ng-class="{'has-error': errorArr.verifEmptyVal1 == '1' || errorArr.verifEmptyVal2 == '1' || errorArr.emptyMsg == '1'}"><!-- Display warning message -->
-            <span class="help-block" ng-if="errorArr.verifEmptyVal1 == 1">The value 1 is missing !</span>
-            <span class="help-block" ng-if="errorArr.verifEmptyVal2 == 1">The value 2 is missing !</span>
-            <span class="help-block" ng-if="errorArr.emptyMsg == 1">The advertising message is missing !</span>
+        <div class="form-group" ng-class="{'has-error': errorArr.emptyVal1 || errorArr.emptyVal2 || errorArr.emptyMsg}"><!-- Display warning message -->
+            <span class="help-block" ng-if="errorArr.emptyVal1">The value 1 is missing !</span>
+            <span class="help-block" ng-if="errorArr.emptyVal2">The value 2 is missing !</span>
+            <span class="help-block" ng-if="errorArr.emptyMsg">The advertising message is missing !</span>
         </div><!--/ Display warning message -->
 	</form>
 </div>

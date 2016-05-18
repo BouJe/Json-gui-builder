@@ -43,24 +43,6 @@ app.controller('paramListControler', ['$scope', '$routeParams', '$http','dataTra
           console.log(response.status);
       });
   }
-  //update the paramList with the parameter updated
-  /*$scope.updateParameters = function() {
-    
-      var tmp = dataTransfert.getParamObject();
-      var find = false;
-      for (var i = 0; i < $scope.data.parameters.length; i++) {
-        if ($scope.data.parameters[i].dbName == tmp.dbName) {
-          $scope.data.parameters[i] = tmp;
-          find = true;
-        }
-      }
-      if (find == false) {
-        $scope.data.parameters.push(tmp);
-      }
-            console.log($scope);
-  }
-
-  }*/
 
 }]);
 
@@ -77,7 +59,7 @@ app.controller('expreController', function($scope, dataTransfert){
   
   $scope.currentParam = dataTransfert.getCurrentParamName();
 
-  $scope.dependencies = dataTransfert.getDependencies();
+  $scope.dependencies = dataTransfert.getSelectedDepencies();
 
   $scope.epressions = dataTransfert.getExpressions();
   

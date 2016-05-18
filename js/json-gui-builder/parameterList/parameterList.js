@@ -17,6 +17,7 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
 		link: function(scope, iElm, iAttrs, controller) {
 
+
 			//PARAMETERS MANAGEMENT//////////////////////////////////////////////////////////////////////////////////////////////////
 
 			scope.delParam = function(index) {
@@ -37,7 +38,7 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 				}
 				//check if the name enter is not already used
 				for (var i = 0; i < scope.data.parameters.length; i++) {
-					if (scope.data.parameters[i].displayName == name) {
+					if (scope.data.parameters[i].displayName == name) {	
 						scope.wrongName = true;
 						return false;
 					}
@@ -48,10 +49,13 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 			//BUILDING DATA FUNCTIONS/////////////////////////////////////////////////////////////////////////
 
 			//Build and send the dependencies array
-			scope.buildDependenciesArrray = function() {
+			scope.buildDependenciesArrray = function(index) {
 				scope.dependencies = [];
   				for (var i = 0; i < scope.data.parameters.length; i++) {
-    				scope.dependencies.push({name: scope.data.parameters[i].displayName, varName: scope.data.parameters[i].dbName});
+  					//exclude the current parameter
+  					if (i != index) {
+  						scope.dependencies.push({name: scope.data.parameters[i].displayName, varName: scope.data.parameters[i].dbName});
+  					}
   				}
   				dataTransfert.setDependencies(scope.dependencies);
 			}
@@ -63,9 +67,9 @@ builderModule.directive('parameterListDir', ['$location', 'dataTransfert', funct
 			//EVENT FUNCTIONS///////////////////////////////////////////////////////////////////////////////////
 
 			scope.goToSetting = function(index) {
-				scope.buildDependenciesArrray();
+				scope.buildDependenciesArrray(index);
 				dataTransfert.setData(scope.data);
-				dataTransfert.setCurrentParamIndex(index);
+				dataTransfert.setCurrentParam(index);
 				$location.path('/portalModels/parameter');
 			}
 

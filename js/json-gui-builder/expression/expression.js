@@ -5,9 +5,9 @@ builderModule.directive('expressionDir', function(){
 		// priority: 1,
 		// terminal: true,
 		scope: {
+			selectedExpre: '=',
 			curreParam: '=',
 			dependenciesArr: '=',
-			selectedExpre: '=',
 			errorArr: '='
 		}, // {} = isolate, true = child, false/undefined = no change
 		// controller: function($scope, $element, $attrs, $transclude) {},

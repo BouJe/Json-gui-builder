@@ -5,9 +5,9 @@ builderModule.directive('expressionListDir', ['$location', 'dataTransfert', func
 		// priority: 1,
 		// terminal: true,
 		scope: {
+			expressions: '=',
 			curreParam: '=',
-			dependenciesArr: '=',
-			expressions: '='
+			dependenciesArr: '='
 		}, // {} = isolate, true = child, false/undefined = no change
 		// controller: function($scope, $element, $attrs, $transclude) {},
 		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
@@ -18,6 +18,9 @@ builderModule.directive('expressionListDir', ['$location', 'dataTransfert', func
 		// transclude: true,
 		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
 		link: function(scope, iElm, iAttrs, controller) {
+
+			//ADD & DELETE FUNCTIONS///////////////////////////////////////////////////////////////////////////////////////////////////
+			
 			scope.addExpression = function() {
 				scope.expressions.push({
 						val1: '',
@@ -32,22 +35,24 @@ builderModule.directive('expressionListDir', ['$location', 'dataTransfert', func
 				scope.errorArr.splice(index, 1);
 			}
 
+			//ERROR MANAGEMENT FUNCTIONS///////////////////////////////////////////////////////////////////////////////////////////////
+
 			scope.errorArr = [];
 
 			scope.verifEmptyField = function(expression) {
 				scope.tmp = {
-					verifEmptyVal1: '0',
-					verifEmptyVal2: '0',
-					emptyMsg: '0'
+					emptyVal1: false,
+					emptyVal2: false,
+					emptyMsg: false
 				}
 				if (expression.val1 == '') {
-					scope.tmp.verifEmptyVal1 = '1';
+					scope.tmp.emptyVal1 = true;
 				}
 				if (expression.val2 == '' || expression.val2 == undefined) {
-					scope.tmp.verifEmptyVal2 = '1';
+					scope.tmp.emptyVal2 = true;
 				} 
 				if (expression.errorMsg == '') {
-					scope.tmp.emptyMsg = '1';
+					scope.tmp.emptyMsg = true;
 				}
 				return scope.tmp;
 			}
@@ -56,24 +61,25 @@ builderModule.directive('expressionListDir', ['$location', 'dataTransfert', func
 			scope.checkErrorArr = function() {
 				var countWrong = 0;
 				for (var i = 0; i < scope.errorArr.length; i++) {
-					if (scope.errorArr[i].verifEmptyVal1 == '1' || scope.errorArr[i].verifEmptyVal2 == '1' || scope.errorArr[i].emptyMsg == '1') {
+					if (scope.errorArr[i].emptyVal1 || scope.errorArr[i].emptyVal2 || scope.errorArr[i].emptyMsg) {
 						return false;
 					}
 				}
 				return true;
 			}
 
+			//SAVE FUNCTION////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 			scope.saveExpressions = function() {
-				console.log(scope.errorArr);
 				for (var i = 0; i < scope.expressions.length; i++) {
 					scope.errorArr[i] = scope.verifEmptyField(scope.expressions[i]);
 				}
+				console.log(scope.errorArr);
 				if (scope.checkErrorArr()) {
 					dataTransfert.setExpressions(scope.expressions);
 					$location.path('/portalModels/parameter');
 				}
 			}
-
 		}
 	};
 }]);
