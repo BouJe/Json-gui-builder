@@ -96,6 +96,8 @@
 	<div class="row"><!-- DEPENDENCIES SELECTION -->
 		<label for="dependencies">Dependencies</label>
 		<div class="form-group" ng-class="{'has-error': dependencieError == '1'}">
+
+
 			<div class="form-inline">
 				<input type="text" placeholder="Choose dependencies..." list='depenList' ng-model="newDepen" class="form-control">
 				<datalist id="depenList">
@@ -103,6 +105,9 @@
 				</datalist>
 				<input type="button" value="+" ng-click="addDependencie(newDepen)" class="btn btn-default btn-sm">
 			</div>
+
+
+			
 			<span class="help-block" ng-if="isADependencie == '0'">The dependencie doesn't exist.</span>
 			<span class="help-block" ng-if="alreadyAdd == '1'">The dependencie is already selected.</span>
 		</div>
